@@ -1,0 +1,343 @@
+export type PriceRange = "₹" | "₹₹" | "₹₹₹" | "₹₹₹₹";
+
+export type Restaurant = {
+  id: string;
+  name: string;
+  area: string;
+  cuisine: string[];
+  vibe: string[];
+  priceRange: PriceRange;
+  description: string;
+  mustTry: string[];
+  pahalsPick: boolean;
+  beenThere: boolean; // Pahal has visited
+  rating: number; // Pahal's personal rating out of 10
+  tags: string[];
+  image: string; // placeholder color for now
+  address: string;
+  openSince?: string;
+};
+
+export const restaurants: Restaurant[] = [
+  {
+    id: "the-bombay-canteen",
+    name: "The Bombay Canteen",
+    area: "Lower Parel",
+    cuisine: ["Indian", "Contemporary"],
+    vibe: ["Date Night", "Groups", "Instagrammable"],
+    priceRange: "₹₹₹",
+    description:
+      "Modern Indian food that makes you proud of where you come from. Thomas Zacharias changed what Indian restaurant food could be.",
+    mustTry: ["Gunpowder Fries", "Toddy Shop Curry", "Kerala Prawn Moilee"],
+    pahalsPick: true,
+    beenThere: true,
+    rating: 9.2,
+    tags: ["Modern Indian", "Cocktails", "Weekend Brunch"],
+    image: "#8B4513",
+    address: "Kamala Mills, Lower Parel, Mumbai 400013",
+    openSince: "2015",
+  },
+  {
+    id: "bademiya",
+    name: "Bade Miya",
+    area: "Colaba",
+    cuisine: ["Mughlai", "Street Food"],
+    vibe: ["Late Night", "Street Food", "Iconic"],
+    priceRange: "₹",
+    description:
+      "70 years of feeding Mumbai at 2am. The seekh kebabs on paav are non-negotiable. Cash only, plastic chairs, worth every rupee.",
+    mustTry: ["Seekh Kebab Pav", "Chicken Tikka", "Baida Roti"],
+    pahalsPick: true,
+    beenThere: true,
+    rating: 9.0,
+    tags: ["Late Night", "Iconic", "Cash Only", "Since 1946"],
+    image: "#C41E3A",
+    address: "Tulloch Road, Behind Taj Hotel, Colaba, Mumbai 400001",
+    openSince: "1946",
+  },
+  {
+    id: "lucky-restaurant-bandra",
+    name: "Lucky Restaurant",
+    area: "Bandra West",
+    cuisine: ["Mughlai", "Irani Cafe"],
+    vibe: ["Breakfast", "Nostalgic", "Locals Only"],
+    priceRange: "₹",
+    description:
+      "The Bandra institution. Irani chai, bun maska, and the kind of slow mornings that don't exist anymore. Open since 1938.",
+    mustTry: ["Irani Chai", "Bun Maska", "Kheema Pav", "Mawa Cake"],
+    pahalsPick: true,
+    beenThere: true,
+    rating: 8.8,
+    tags: ["Breakfast", "Irani Cafe", "Heritage", "Since 1938"],
+    image: "#4A3728",
+    address: "Hill Road, Bandra West, Mumbai 400050",
+    openSince: "1938",
+  },
+  {
+    id: "masala-library",
+    name: "Masala Library",
+    area: "Bandra Kurla Complex",
+    cuisine: ["Indian", "Fine Dining"],
+    vibe: ["Special Occasion", "Business Dinner", "Tasting Menu"],
+    priceRange: "₹₹₹₹",
+    description:
+      "The finest modern Indian tasting menu in the city. Jiggs Kalra's molecular gastronomy journey through Indian cuisine. Book weeks in advance.",
+    mustTry: ["Dal Baati Churma Spheres", "Raan", "Tasting Menu"],
+    pahalsPick: false,
+    beenThere: true,
+    rating: 9.5,
+    tags: ["Fine Dining", "Tasting Menu", "Molecular", "Special Occasion"],
+    image: "#1a1a2e",
+    address: "First International Financial Centre, BKC, Mumbai 400051",
+  },
+  {
+    id: "khyber-fort",
+    name: "Khyber",
+    area: "Fort",
+    cuisine: ["North Indian", "Mughlai"],
+    vibe: ["Business Lunch", "Heritage", "Groups"],
+    priceRange: "₹₹₹",
+    description:
+      "A Fort institution since 1985. The murals, the kebabs, the dal makhani — some things should never change.",
+    mustTry: ["Raan-E-Khyber", "Dal Makhani", "Gosht Seekh Kebab"],
+    pahalsPick: true,
+    beenThere: true,
+    rating: 8.9,
+    tags: ["Heritage", "Kebabs", "Since 1985", "Landmark"],
+    image: "#8B6914",
+    address: "145 MG Road, Fort, Mumbai 400001",
+    openSince: "1985",
+  },
+  {
+    id: "aux-quatre-vents",
+    name: "Aux Quatre Vents",
+    area: "Pali Hill",
+    cuisine: ["French", "European"],
+    vibe: ["Date Night", "Hidden Gem", "Quiet"],
+    priceRange: "₹₹₹",
+    description:
+      "Bandra's best kept secret. A tiny French bistro hidden in the lanes of Pali Hill. Coq au vin, French onion soup, and imported wine.",
+    mustTry: ["Coq au Vin", "French Onion Soup", "Crème Brûlée"],
+    pahalsPick: true,
+    beenThere: false,
+    rating: 8.7,
+    tags: ["Hidden Gem", "French", "Wine", "Quiet"],
+    image: "#2C4A2E",
+    address: "Pali Hill, Bandra West, Mumbai 400050",
+  },
+  {
+    id: "serial-grillers-bandra",
+    name: "Serial Grillers",
+    area: "Bandra West",
+    cuisine: ["American BBQ", "Burgers"],
+    vibe: ["Casual", "Groups", "Late Night"],
+    priceRange: "₹₹",
+    description:
+      "Mumbai's best smash burgers. The Serial Smash is the benchmark — two patties, American cheese, secret sauce. Queue expected on weekends.",
+    mustTry: ["Serial Smash Burger", "Loaded Fries", "Crispy Chicken Burger"],
+    pahalsPick: true,
+    beenThere: true,
+    rating: 8.4,
+    tags: ["Burgers", "Smash Burger", "Casual", "Late Night"],
+    image: "#8B0000",
+    address: "Chapel Road, Bandra West, Mumbai 400050",
+  },
+  {
+    id: "bayroute-juhu",
+    name: "Bayroute",
+    area: "Juhu",
+    cuisine: ["Lebanese", "Middle Eastern"],
+    vibe: ["Date Night", "Groups", "Rooftop"],
+    priceRange: "₹₹₹",
+    description:
+      "The best hummus in Mumbai, full stop. The mezze spread for a table of four is the move. Beautiful space, consistent quality.",
+    mustTry: ["Hummus", "Mezze Platter", "Lamb Ouzi", "Knafeh"],
+    pahalsPick: true,
+    beenThere: true,
+    rating: 8.6,
+    tags: ["Lebanese", "Mezze", "Date Night", "Vegetarian Friendly"],
+    image: "#C4A35A",
+    address: "Gulmohar Cross Road 9, Juhu, Mumbai 400049",
+  },
+  {
+    id: "pali-village-cafe",
+    name: "Pali Village Cafe",
+    area: "Pali Hill",
+    cuisine: ["All Day Café", "Continental"],
+    vibe: ["Brunch", "Work", "Casual"],
+    priceRange: "₹₹",
+    description:
+      "The original Bandra café. Consistently good eggs, great coffee, the kind of laid-back energy that makes you stay for three hours.",
+    mustTry: ["Eggs Benedict", "Blueberry Pancakes", "Cold Coffee"],
+    pahalsPick: false,
+    beenThere: true,
+    rating: 8.0,
+    tags: ["Brunch", "Café", "All Day", "Eggs"],
+    image: "#5C7A5C",
+    address: "Veronica Street, Pali Hill, Bandra West, Mumbai 400050",
+  },
+  {
+    id: "mahesh-lunch-home-fort",
+    name: "Mahesh Lunch Home",
+    area: "Fort",
+    cuisine: ["Seafood", "Coastal Indian"],
+    vibe: ["Lunch", "Heritage", "Locals"],
+    priceRange: "₹₹",
+    description:
+      "The definitive Mangalorean seafood restaurant in Mumbai. The crab gassi and prawn ghee roast are worth missing a meeting for.",
+    mustTry: ["Crab Gassi", "Prawn Ghee Roast", "Neer Dosa", "Bangda Fry"],
+    pahalsPick: true,
+    beenThere: true,
+    rating: 9.1,
+    tags: ["Seafood", "Mangalorean", "Heritage", "Lunch"],
+    image: "#1B4F72",
+    address: "Cowasji Patel Street, Fort, Mumbai 400001",
+  },
+  {
+    id: "trattoria-taj-colaba",
+    name: "Trattoria",
+    area: "Colaba",
+    cuisine: ["Italian", "Pizza"],
+    vibe: ["Casual", "Families", "All Day"],
+    priceRange: "₹₹₹",
+    description:
+      "The Taj's casual Italian — don't let the hotel address fool you, the pricing is reasonable and the thin crust pizzas are exceptional.",
+    mustTry: ["Margherita Pizza", "Tiramisu", "Penne Arrabbiata"],
+    pahalsPick: false,
+    beenThere: true,
+    rating: 8.3,
+    tags: ["Pizza", "Italian", "Taj Hotel", "Casual Fine"],
+    image: "#8B1A1A",
+    address: "Taj Mahal Palace Hotel, Apollo Bunder, Colaba, Mumbai 400001",
+  },
+  {
+    id: "the-table-colaba",
+    name: "The Table",
+    area: "Colaba",
+    cuisine: ["European", "Contemporary"],
+    vibe: ["Date Night", "Special Occasion", "Long Lunch"],
+    priceRange: "₹₹₹₹",
+    description:
+      "Jay Youssef's neighbourhood restaurant philosophy at its finest. The Sunday brunch is one of the best experiences in the city.",
+    mustTry: ["Housemade Pasta", "Burrata", "Sunday Brunch"],
+    pahalsPick: true,
+    beenThere: true,
+    rating: 9.3,
+    tags: ["Fine Casual", "Sunday Brunch", "European", "Colaba"],
+    image: "#2C2C54",
+    address: "Kaala Ghoda, Colaba, Mumbai 400001",
+  },
+];
+
+export const areas = [
+  "All Areas",
+  "Bandra West",
+  "Colaba",
+  "Lower Parel",
+  "Fort",
+  "Juhu",
+  "BKC",
+  "Pali Hill",
+  "Worli",
+  "Andheri",
+  "Powai",
+];
+
+export const cuisines = [
+  "All Cuisines",
+  "Indian",
+  "Mughlai",
+  "Seafood",
+  "Italian",
+  "French",
+  "Lebanese",
+  "Street Food",
+  "Contemporary",
+  "Irani Café",
+];
+
+export const vibes = [
+  "Date Night",
+  "Late Night",
+  "Brunch",
+  "Hidden Gem",
+  "Heritage",
+  "Special Occasion",
+  "Casual",
+  "Groups",
+];
+
+export const curatedLists = [
+  {
+    id: "pahal-essentials",
+    title: "Pahal's Mumbai Essentials",
+    subtitle: "12 restaurants every Mumbaikar must eat at least once",
+    count: 12,
+    tag: "Curator's Pick",
+    color: "#c9a84c",
+    restaurantIds: [
+      "the-bombay-canteen",
+      "bademiya",
+      "lucky-restaurant-bandra",
+      "khyber-fort",
+      "mahesh-lunch-home-fort",
+      "the-table-colaba",
+    ],
+  },
+  {
+    id: "late-night-mumbai",
+    title: "Late Night Mumbai",
+    subtitle: "Where to eat when the city should be asleep",
+    count: 8,
+    tag: "Late Night",
+    color: "#8B0000",
+    restaurantIds: ["bademiya", "serial-grillers-bandra"],
+  },
+  {
+    id: "bandra-deep-cuts",
+    title: "Bandra Deep Cuts",
+    subtitle: "Beyond the obvious — the places locals don't post about",
+    count: 9,
+    tag: "Hidden Gems",
+    color: "#2C4A2E",
+    restaurantIds: [
+      "lucky-restaurant-bandra",
+      "aux-quatre-vents",
+      "pali-village-cafe",
+      "serial-grillers-bandra",
+    ],
+  },
+  {
+    id: "old-bombay",
+    title: "Old Bombay",
+    subtitle: "Restaurants that have survived everything the city has thrown at them",
+    count: 7,
+    tag: "Heritage",
+    color: "#8B6914",
+    restaurantIds: ["bademiya", "lucky-restaurant-bandra", "khyber-fort", "mahesh-lunch-home-fort"],
+  },
+  {
+    id: "splurge-worthy",
+    title: "Worth the Splurge",
+    subtitle: "When you need to impress or celebrate",
+    count: 6,
+    tag: "Fine Dining",
+    color: "#1a1a2e",
+    restaurantIds: ["masala-library", "the-table-colaba", "the-bombay-canteen"],
+  },
+  {
+    id: "date-night",
+    title: "Date Night Approved",
+    subtitle: "Pahal-vetted spots guaranteed to impress",
+    count: 10,
+    tag: "Date Night",
+    color: "#4A1942",
+    restaurantIds: [
+      "the-table-colaba",
+      "aux-quatre-vents",
+      "bayroute-juhu",
+      "the-bombay-canteen",
+      "masala-library",
+    ],
+  },
+];
