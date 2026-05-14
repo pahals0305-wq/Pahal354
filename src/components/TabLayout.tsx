@@ -3,6 +3,7 @@ import { useState } from "react";
 import YourList from "./YourList";
 import ExploreByMoment from "./ExploreByMoment";
 import StatsCounter from "./StatsCounter";
+import BrowseTab from "./BrowseTab";
 
 /* ── TYPES ───────────────────────────────────────────────────── */
 type Friend = { initials: string };
@@ -527,7 +528,7 @@ function SiteFooter() {
 }
 
 /* ── TAB LAYOUT (default export) ─────────────────────────────── */
-const TABS = ["home", "lists", "friends", "profile"] as const;
+const TABS = ["home", "browse", "lists", "friends", "profile"] as const;
 type Tab = (typeof TABS)[number];
 
 export default function TabLayout() {
@@ -588,6 +589,7 @@ export default function TabLayout() {
 
       {/* Tab panels — instant show/hide, no animation */}
       <div style={{ display: active === "home"    ? "block" : "none" }}><HomeTab /></div>
+      <div style={{ display: active === "browse"  ? "block" : "none" }}><BrowseTab /></div>
       <div style={{ display: active === "lists"   ? "block" : "none" }}><ListsTab /></div>
       <div style={{ display: active === "friends" ? "block" : "none" }}><FriendsTab /></div>
       <div style={{ display: active === "profile" ? "block" : "none" }}><ProfileTab /></div>

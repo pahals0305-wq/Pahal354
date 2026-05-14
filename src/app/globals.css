@@ -89,3 +89,58 @@ body {
 .area-chip:hover {
   opacity: 0.75;
 }
+
+/* Browse tab — cuisine chips */
+.cuisine-chip {
+  border: 1px solid #e8e4de;
+  border-radius: 2px;
+  padding: 10px 16px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: background 150ms ease;
+  text-align: left;
+  font-family: inherit;
+  min-width: 120px;
+}
+.cuisine-chip:hover {
+  background: #f5f3f0;
+}
+.cuisine-chip.c-active {
+  background: #111009;
+  border-color: #111009;
+}
+
+/* Browse tab — vibe chips (wrap row) */
+.vibe-chip-btn {
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid #e8e4de;
+  border-radius: 2px;
+  background: #ffffff;
+  font-size: 12px;
+  font-weight: 400;
+  color: #111009;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.vibe-chip-btn:hover {
+  background: #f5f3f0;
+  border-color: #111009;
+}
+.vibe-chip-btn.v-active {
+  background: #111009;
+  color: #ffffff;
+  border-color: #111009;
+}
+
+/* Browse — card active state */
+.browse-card-active {
+  background: #111009 !important;
+  border-color: #111009 !important;
+}
+.browse-card-active p,
+.browse-card-active span {
+  color: #ffffff !important;
+}
