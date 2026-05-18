@@ -1,16 +1,12 @@
 "use client";
 import { useState } from "react";
+import { Home, Search, BookOpen, Users, User } from "lucide-react";
 import YourList from "./YourList";
-import ExploreByMoment from "./ExploreByMoment";
-import StatsCounter from "./StatsCounter";
 import BrowseTab from "./BrowseTab";
+import StatsCounter from "./StatsCounter";
 
 /* ── TYPES ───────────────────────────────────────────────────── */
 type Friend = { initials: string };
-type VenueData = {
-  name: string; neighbourhood: string; cuisine: string;
-  approved: boolean; img: string;
-};
 type ActivityData = {
   friend: Friend; fname: string; action: string;
   venue: string; neighbourhood: string; cuisine: string;
@@ -19,10 +15,6 @@ type ActivityData = {
 type ListData = {
   title: string; curator: string; curatorInitials: string;
   count: number; img: string;
-};
-type CuratorData = {
-  initials: string; name: string; descriptor: string;
-  thumbs: [string, string, string];
 };
 type RankedData = {
   rank: number; venue: string; neighbourhood: string;
@@ -35,64 +27,75 @@ const F: Record<string, Friend> = {
   SM: { initials: "SM" }, VN: { initials: "VN" }, TJ: { initials: "TJ" },
 };
 
-const NEW_OPENINGS: VenueData[] = [
-  { name: "Sixteen 33",     neighbourhood: "Bandra",            cuisine: "Contemporary",    approved: true,  img: "#E4E0D8" },
-  { name: "Bodega39",       neighbourhood: "Goregaon",          cuisine: "Bar & Kitchen",   approved: true,  img: "#EAE7E2" },
-  { name: "Kyma",           neighbourhood: "BKC",               cuisine: "Greek Seafood",   approved: true,  img: "#DDD9D3" },
-  { name: "Indian Accent",  neighbourhood: "Jio World Centre",  cuisine: "Modern Indian",   approved: true,  img: "#E0DDD6" },
-  { name: "Pompa",          neighbourhood: "Bandra",            cuisine: "Mexican",         approved: true,  img: "#E4E0D8" },
-  { name: "Lyla",           neighbourhood: "BKC",               cuisine: "Spanish",         approved: true,  img: "#EAE7E2" },
-  { name: "Nusara",         neighbourhood: "Lower Parel",       cuisine: "Thai",            approved: true,  img: "#DDD9D3" },
-  { name: "Gigi",           neighbourhood: "Bandra",            cuisine: "Italian",         approved: true,  img: "#E0DDD6" },
+const HERO_VENUES = [
+  { img: "#E4E0D8", tags: "Contemporary Indian, Date Night, Lower Parel" },
+  { img: "#EAE7E2", tags: "Tasting Menu, Modern Indian, Special Occasion" },
+  { img: "#DDD9D3", tags: "Contemporary, Long Lunch, Colaba" },
+  { img: "#E0DDD6", tags: "Japanese, Date Night, Omakase, BKC" },
+  { img: "#E4E0D8", tags: "Thai, Special Occasion, Lower Parel" },
+  { img: "#EAE7E2", tags: "Modern Indian, Tasting Menu, Jio World Centre" },
+  { img: "#DDD9D3", tags: "Italian, Date Night, BKC" },
+  { img: "#E0DDD6", tags: "Contemporary Indian, Counter Dining, Fort" },
+  { img: "#E4E0D8", tags: "Seafood, Heritage, Long Lunch, Fort" },
 ];
 
-const RECENTLY_APPROVED: VenueData[] = [
-  { name: "Pa Pa Ya",       neighbourhood: "BKC",     cuisine: "Pan-Asian",           approved: true, img: "#E4E0D8" },
-  { name: "The Table",      neighbourhood: "Colaba",  cuisine: "Contemporary",        approved: true, img: "#EAE7E2" },
-  { name: "Tresind",        neighbourhood: "BKC",     cuisine: "Progressive Indian",  approved: true, img: "#DDD9D3" },
-  { name: "Hakkasan",       neighbourhood: "Bandra",  cuisine: "Chinese",             approved: true, img: "#E0DDD6" },
-  { name: "Foo Asian Tapas",neighbourhood: "Bandra",  cuisine: "Asian",               approved: true, img: "#E4E0D8" },
-  { name: "One8 Commune",   neighbourhood: "BKC",     cuisine: "All-day dining",      approved: true, img: "#EAE7E2" },
-  { name: "Yauatcha",       neighbourhood: "BKC",     cuisine: "Dim Sum",             approved: true, img: "#DDD9D3" },
-  { name: "CinCin",         neighbourhood: "BKC",     cuisine: "Italian",             approved: true, img: "#E0DDD6" },
-  { name: "Bastian",        neighbourhood: "Worli",   cuisine: "Seafood",             approved: true, img: "#E4E0D8" },
+const NEW_IN_MUMBAI = [
+  { name: "Sixteen 33",    area: "Bandra",      img: "#E4E0D8", tags: "Contemporary, New Opening, Date Night" },
+  { name: "Kyma",          area: "BKC",          img: "#EAE7E2", tags: "Greek Seafood, New Opening" },
+  { name: "Pompa",         area: "Bandra",       img: "#DDD9D3", tags: "Mexican, Casual, Cocktails" },
+  { name: "Lyla",          area: "BKC",          img: "#E0DDD6", tags: "Spanish, Wine Bar, Tapas" },
+  { name: "Nusara",        area: "Lower Parel",  img: "#E4E0D8", tags: "Thai, Special Occasion" },
+  { name: "Gigi",          area: "Bandra",       img: "#EAE7E2", tags: "Italian, Date Night, Pasta" },
+  { name: "Indian Accent", area: "Jio World Centre", img: "#DDD9D3", tags: "Modern Indian, Tasting Menu" },
+  { name: "Bodega39",      area: "Goregaon",     img: "#E0DDD6", tags: "Bar & Kitchen, Casual" },
 ];
 
-const AREAS = [
-  "Bandra", "Colaba", "Kala Ghoda", "Fort", "BKC", "Lower Parel",
-  "Worli", "Juhu", "Versova", "Andheri", "Mahalaxmi", "Matunga", "Powai", "Santacruz",
+const EDITORS_PICKS = [
+  { name: "Masque",              area: "Mahalaxmi",  img: "#EAE7E2", tags: "Modern Indian, Tasting Menu, Special Occasion" },
+  { name: "The Table",           area: "Colaba",     img: "#E0DDD6", tags: "Contemporary, Date Night, Long Lunch" },
+  { name: "Ekaa",                area: "Fort",       img: "#E4E0D8", tags: "Contemporary Indian, Counter Dining" },
+  { name: "Torii",               area: "BKC",        img: "#DDD9D3", tags: "Japanese, Omakase, Date Night" },
+  { name: "Bastian",             area: "Bandra",     img: "#EAE7E2", tags: "Seafood, Casual, Groups" },
+  { name: "Mahesh Lunch Home",   area: "Fort",       img: "#E4E0D8", tags: "Seafood, Heritage, Lunch" },
+  { name: "The Bombay Canteen",  area: "Lower Parel",img: "#E0DDD6", tags: "Contemporary Indian, Groups, Bar" },
+  { name: "Tresind",             area: "BKC",        img: "#DDD9D3", tags: "Progressive Indian, Special Occasion" },
 ];
 
-const VIBES = [
-  "date night", "sunday brunch", "natural wine", "big groups", "outdoor seating",
-  "late night", "hidden gem", "solo friendly", "good for work", "special occasion",
-  "vegetarian-forward", "counter dining", "tasting menu", "walk-ins welcome",
-  "rooftop", "by the water", "late kitchen", "neighbourhood icon",
+const LATE_NIGHT = [
+  { name: "Bademiyaan",           area: "Colaba",      img: "#DDD9D3", tags: "Street Food, Open Till 3:30am, Iconic" },
+  { name: "Woodside Inn",         area: "Bandra",      img: "#E4E0D8", tags: "Bar, Late Night, Walk-ins" },
+  { name: "Lord of the Drinks",   area: "Lower Parel", img: "#EAE7E2", tags: "Bar, Cocktails, Late Night" },
+  { name: "Sigdi",                area: "Bandra",      img: "#E0DDD6", tags: "Street Food, Open Till 6am" },
+  { name: "14th Street Dessert",  area: "Fort",        img: "#DDD9D3", tags: "Desserts, Open Till 5am" },
+  { name: "Good Flippin Burgers", area: "Juhu",        img: "#E4E0D8", tags: "Burgers, Open Till 3am" },
+  { name: "Trattoria",            area: "Colaba",      img: "#EAE7E2", tags: "Italian, Open Till 4am, Taj" },
+  { name: "Hyde",                 area: "South Bombay",img: "#E0DDD6", tags: "Bar, Late Night, Cocktails" },
+];
+
+const WEEKEND_BRUNCH = [
+  { name: "Prithvi Cafe",     area: "Juhu",      img: "#E0DDD6", tags: "Café, Slow Morning, Heritage, Outdoor" },
+  { name: "Pali Village Café",area: "Pali Hill", img: "#E4E0D8", tags: "All-day, Brunch, Eggs, Bandra" },
+  { name: "The Table",        area: "Colaba",    img: "#EAE7E2", tags: "Sunday Brunch, Contemporary, Worth It" },
+  { name: "Candies",          area: "Bandra",    img: "#DDD9D3", tags: "Café, Nostalgic, Bandra Icon" },
+  { name: "Sequel",           area: "Bandra",    img: "#E0DDD6", tags: "Health Café, Brunch, Light" },
+  { name: "Bustle",           area: "Bandra",    img: "#E4E0D8", tags: "All-day, Casual, Good Coffee" },
+  { name: "Bayroute",         area: "Juhu",      img: "#EAE7E2", tags: "Lebanese, Mezze, Slow Lunch" },
+  { name: "O Pedro",          area: "BKC",       img: "#DDD9D3", tags: "Goan, Brunch, Festive, BKC" },
 ];
 
 const ALL_LISTS: ListData[] = [
-  { title: "best for a long lunch",                         curator: "by P.",                        curatorInitials: "P",  count: 9,  img: "#E4E0D8" },
-  { title: "worth the travel",                              curator: "by P.",                        curatorInitials: "P",  count: 7,  img: "#EAE7E2" },
-  { title: "tables for two",                                curator: "by the bombay platelist team", curatorInitials: "BP", count: 12, img: "#DDD9D3" },
-  { title: "the wine list matters here",                    curator: "by P.",                        curatorInitials: "P",  count: 6,  img: "#E0DDD6" },
-  { title: "open late",                                     curator: "by the bombay platelist team", curatorInitials: "BP", count: 11, img: "#E4E0D8" },
-  { title: "counter dining done right",                     curator: "by P.",                        curatorInitials: "P",  count: 8,  img: "#EAE7E2" },
-  { title: "tasting menus worth clearing your calendar for",curator: "by the bombay platelist team", curatorInitials: "BP", count: 5,  img: "#DDD9D3" },
-  { title: "neighbourhood icons",                           curator: "by P.",                        curatorInitials: "P",  count: 14, img: "#E0DDD6" },
-  { title: "new mumbai",                                    curator: "by the bombay platelist team", curatorInitials: "BP", count: 6,  img: "#E4E0D8" },
-  { title: "brought by a friend",                           curator: "by Tara J.",                   curatorInitials: "TJ", count: 8,  img: "#EAE7E2" },
-  { title: "the classics",                                  curator: "by P.",                        curatorInitials: "P",  count: 10, img: "#DDD9D3" },
-  { title: "worth clearing your sunday for",                curator: "by the bombay platelist team", curatorInitials: "BP", count: 7,  img: "#E0DDD6" },
-];
-
-const HOME_LISTS = ALL_LISTS.slice(0, 8);
-
-const CURATORS: CuratorData[] = [
-  { initials: "RM", name: "Rahul M.",  descriptor: "food writer",           thumbs: ["#E4E0D8", "#DDD9D3", "#EAE7E2"] },
-  { initials: "AS", name: "Aditi S.",  descriptor: "chef, Bandra",          thumbs: ["#EAE7E2", "#E4E0D8", "#DDD9D3"] },
-  { initials: "JK", name: "Jay K.",    descriptor: "been to 94 places",     thumbs: ["#DDD9D3", "#EAE7E2", "#E4E0D8"] },
-  { initials: "PT", name: "Priya T.",  descriptor: "restaurant consultant", thumbs: ["#E0DDD6", "#DDD9D3", "#EAE7E2"] },
-  { initials: "VN", name: "Vikram N.", descriptor: "been to 78 places",     thumbs: ["#EAE7E2", "#E0DDD6", "#DDD9D3"] },
+  { title: "best for a long lunch",                          curator: "by P.",                        curatorInitials: "P",  count: 9,  img: "#E4E0D8" },
+  { title: "worth the travel",                               curator: "by P.",                        curatorInitials: "P",  count: 7,  img: "#EAE7E2" },
+  { title: "tables for two",                                 curator: "by the bombay platelist team", curatorInitials: "BP", count: 12, img: "#DDD9D3" },
+  { title: "the wine list matters here",                     curator: "by P.",                        curatorInitials: "P",  count: 6,  img: "#E0DDD6" },
+  { title: "open late",                                      curator: "by the bombay platelist team", curatorInitials: "BP", count: 11, img: "#E4E0D8" },
+  { title: "counter dining done right",                      curator: "by P.",                        curatorInitials: "P",  count: 8,  img: "#EAE7E2" },
+  { title: "tasting menus worth clearing your calendar for", curator: "by the bombay platelist team", curatorInitials: "BP", count: 5,  img: "#DDD9D3" },
+  { title: "neighbourhood icons",                            curator: "by P.",                        curatorInitials: "P",  count: 14, img: "#E0DDD6" },
+  { title: "new mumbai",                                     curator: "by the bombay platelist team", curatorInitials: "BP", count: 6,  img: "#E4E0D8" },
+  { title: "brought by a friend",                            curator: "by Tara J.",                   curatorInitials: "TJ", count: 8,  img: "#EAE7E2" },
+  { title: "the classics",                                   curator: "by P.",                        curatorInitials: "P",  count: 10, img: "#DDD9D3" },
+  { title: "worth clearing your sunday for",                 curator: "by the bombay platelist team", curatorInitials: "BP", count: 7,  img: "#E0DDD6" },
 ];
 
 const ACTIVITY: ActivityData[] = [
@@ -126,87 +129,51 @@ function Av({ initials, size = 24 }: { initials: string; size?: number }) {
       display: "flex", alignItems: "center", justifyContent: "center",
       fontSize: 10, fontWeight: 400, color: "#8A8680",
       flexShrink: 0, userSelect: "none",
-    }}>
-      {initials}
-    </div>
+    }}>{initials}</div>
   );
 }
 
 function Diamond() {
-  return (
-    <span style={{
-      position: "absolute", top: 8, right: 8,
-      fontSize: 11, color: "#D4962A", lineHeight: 1,
-    }}>◆</span>
-  );
+  return <span style={{ position: "absolute", top: 8, right: 8, fontSize: 11, color: "#D4962A" }}>◆</span>;
 }
 
-function Label({ text }: { text: string }) {
+/* ── ONEZONE-STYLE VENUE CARD ────────────────────────────────── */
+function OZCard({
+  name, area, img, tags, imgHeight = 240,
+}: {
+  name?: string; area?: string; img: string; tags: string; imgHeight?: number;
+}) {
   return (
-    <p style={{
-      fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase",
-      color: "#8A8680", fontWeight: 400, marginBottom: 24,
-    }}>
-      {text}
-    </p>
-  );
-}
-
-function VenueCard({ v, imgHeight = 200 }: { v: VenueData; imgHeight?: number }) {
-  return (
-    <div className="hoverable" style={{ borderRadius: 4, overflow: "hidden" }}>
-      <div style={{ position: "relative", height: imgHeight, background: v.img }}>
-        {v.approved && <Diamond />}
-      </div>
-      <div style={{ paddingTop: 12, paddingBottom: 4 }}>
-        <p style={{ fontSize: 15, fontWeight: 500, color: "#111009", marginBottom: 3 }}>{v.name}</p>
-        <p style={{ fontSize: 12, color: "#8A8680" }}>{v.neighbourhood} · {v.cuisine}</p>
-      </div>
+    <div className="hoverable" style={{ width: 220, flexShrink: 0 }}>
+      {name && (
+        <>
+          <p style={{
+            fontSize: 13, fontWeight: 500, color: "#111009",
+            textTransform: "uppercase", letterSpacing: "0.03em",
+            whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+          }}>{name}</p>
+          <p style={{ fontSize: 12, color: "#8A8680", marginTop: 2, marginBottom: 10 }}>{area}</p>
+        </>
+      )}
+      <div style={{ height: imgHeight, background: img, borderRadius: 4 }} />
+      <p style={{ fontSize: 11, color: "#8A8680", marginTop: 8, lineHeight: 1.6 }}>{tags}</p>
     </div>
   );
 }
 
-function ListCard({ l, imgHeight = 150 }: { l: ListData; imgHeight?: number }) {
+/* ── SECTION HEADER (title + Show all) ──────────────────────── */
+function SectionHead({ title }: { title: string }) {
   return (
-    <div className="hoverable">
-      <div style={{ height: imgHeight, background: l.img, borderRadius: 4 }} />
-      <div style={{ paddingTop: 12, paddingBottom: 4 }}>
-        <p style={{ fontSize: 13, fontStyle: "italic", fontWeight: 400, color: "#111009", marginBottom: 6 }}>
-          {l.title}
-        </p>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-          <Av initials={l.curatorInitials} size={16} />
-          <span style={{ fontSize: 11, color: "#8A8680" }}>{l.curator}</span>
-        </div>
-        <p style={{ fontSize: 11, color: "#8A8680" }}>{l.count} places</p>
-      </div>
-    </div>
-  );
-}
-
-function FeaturedList() {
-  return (
-    <div style={{ display: "flex", minHeight: 300, borderRadius: 4, overflow: "hidden" }}>
-      <div style={{ width: "55%", background: "#DDD9D3", flexShrink: 0 }} />
-      <div style={{
-        width: "45%", background: "#F5F3F0", padding: 48,
-        display: "flex", flexDirection: "column", justifyContent: "space-between",
-      }}>
-        <div>
-          <p style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8A8680" }}>
-            Editor&apos;s Pick
-          </p>
-          <p style={{ fontSize: 22, fontWeight: 300, fontStyle: "italic", color: "#111009", lineHeight: 1.35, marginTop: 12 }}>
-            the mumbai classics you should have eaten by now
-          </p>
-          <p style={{ fontSize: 13, color: "#8A8680", lineHeight: 1.6, marginTop: 16, maxWidth: 340 }}>
-            Places that have been here longer than you. The ones that define what eating in this city actually means.
-          </p>
-        </div>
-        <p style={{ fontSize: 11, color: "#8A8680" }}>
-          14 places · <em>by the bombay platelist team</em>
-        </p>
-      </div>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+      <p style={{ fontSize: 15, fontWeight: 500, color: "#111009" }}>{title}</p>
+      <a
+        href="#"
+        style={{ fontSize: 13, color: "#8A8680", textDecoration: "none" }}
+        onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
+        onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
+      >
+        Show all
+      </a>
     </div>
   );
 }
@@ -214,169 +181,74 @@ function FeaturedList() {
 /* ── HOME TAB ────────────────────────────────────────────────── */
 function HomeTab() {
   return (
-    <div>
+    <div style={{ paddingBottom: 80 }}>
 
-      {/* 1. Editorial statement */}
-      <div style={{ padding: "100px 40px", textAlign: "center" }}>
-        <p style={{
-          fontSize: 20, fontWeight: 300, fontStyle: "italic",
-          color: "#111009", lineHeight: 1.5,
-          maxWidth: 600, margin: "0 auto",
-        }}>
-          &ldquo;Mumbai has always known how to eat. We just wrote it down.&rdquo;
-        </p>
+      {/* Hero image strip — no names, just images + tags */}
+      <div className="scroll-row" style={{ padding: "32px 0 32px 24px", gap: 12 }}>
+        {HERO_VENUES.map((v, i) => (
+          <OZCard key={i} img={v.img} tags={v.tags} imgHeight={280} />
+        ))}
+        <div style={{ width: 24, flexShrink: 0 }} />
       </div>
 
-      {/* 2. New Openings */}
-      <section style={{ paddingBottom: 80 }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 40px" }}>
-          <Label text="New Openings" />
+      <div style={{ height: 1, background: "#E8E4DE" }} />
+
+      {/* New in Mumbai */}
+      <section style={{ padding: "40px 0 0" }}>
+        <div style={{ padding: "0 24px" }}>
+          <SectionHead title="New in Mumbai" />
         </div>
-        <div className="scroll-row" style={{ paddingLeft: 40, gap: 16 }}>
-          {NEW_OPENINGS.map((v, i) => (
-            <div key={i} style={{ width: 280, flexShrink: 0 }}>
-              <VenueCard v={v} imgHeight={200} />
-            </div>
+        <div className="scroll-row" style={{ paddingLeft: 24, gap: 16 }}>
+          {NEW_IN_MUMBAI.map((v, i) => (
+            <OZCard key={i} name={v.name} area={v.area} img={v.img} tags={v.tags} />
           ))}
-          <div style={{ width: 40, flexShrink: 0 }} />
+          <div style={{ width: 24, flexShrink: 0 }} />
         </div>
       </section>
 
-      {/* 3. Areas */}
-      <section style={{ paddingBottom: 80 }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 40px" }}>
-          <Label text="Areas" />
+      <div style={{ height: 1, background: "#E8E4DE", margin: "40px 0 0" }} />
+
+      {/* Editor's Picks */}
+      <section style={{ padding: "40px 0 0" }}>
+        <div style={{ padding: "0 24px" }}>
+          <SectionHead title="Editor's Picks" />
         </div>
-        <div className="scroll-row" style={{ paddingLeft: 40, gap: 8 }}>
-          {AREAS.map((area) => (
-            <button key={area} className="area-chip"
-              style={{ height: 36, padding: "0 16px", fontSize: 13, fontFamily: "inherit" }}>
-              {area}
-            </button>
+        <div className="scroll-row" style={{ paddingLeft: 24, gap: 16 }}>
+          {EDITORS_PICKS.map((v, i) => (
+            <OZCard key={i} name={v.name} area={v.area} img={v.img} tags={v.tags} />
           ))}
-          <div style={{ width: 40, flexShrink: 0 }} />
+          <div style={{ width: 24, flexShrink: 0 }} />
         </div>
       </section>
 
-      {/* 4. Stats row */}
-      <StatsCounter />
+      <div style={{ height: 1, background: "#E8E4DE", margin: "40px 0 0" }} />
 
-      {/* 5. Editor's Lists */}
-      <section style={{ padding: "80px 0" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 40px" }}>
-          <Label text="Editor's Lists" />
-          <FeaturedList />
+      {/* Late Night Mumbai */}
+      <section style={{ padding: "40px 0 0" }}>
+        <div style={{ padding: "0 24px" }}>
+          <SectionHead title="Late Night Mumbai" />
         </div>
-        <div className="scroll-row" style={{ marginTop: 24, paddingLeft: 40, gap: 16 }}>
-          {HOME_LISTS.map((l, i) => (
-            <div key={i} style={{ width: 220, flexShrink: 0 }}>
-              <ListCard l={l} imgHeight={150} />
-            </div>
+        <div className="scroll-row" style={{ paddingLeft: 24, gap: 16 }}>
+          {LATE_NIGHT.map((v, i) => (
+            <OZCard key={i} name={v.name} area={v.area} img={v.img} tags={v.tags} />
           ))}
-          <div style={{ width: 40, flexShrink: 0 }} />
+          <div style={{ width: 24, flexShrink: 0 }} />
         </div>
       </section>
 
-      {/* 6. How It Works */}
-      <section style={{ padding: "80px 0", borderTop: "1px solid #E8E4DE" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 40px" }}>
-          <Label text="How It Works" />
-          <div style={{ display: "flex", gap: 64 }}>
-            {[
-              {
-                headline: "every place is visited",
-                body: "No algorithms, no paid placement. Every venue on Bombay Platelist has been eaten at by a human being.",
-              },
-              {
-                headline: "we edit, not aggregate",
-                body: "We don't list everything. We choose. That means some very good places aren't here yet. That's the point.",
-              },
-              {
-                headline: "the list is alive",
-                body: "Places get removed. New approvals happen weekly. The list reflects Mumbai as it is right now, not two years ago.",
-              },
-            ].map((col) => (
-              <div key={col.headline} style={{ flex: 1 }}>
-                <p style={{ fontSize: 15, fontWeight: 500, color: "#111009" }}>{col.headline}</p>
-                <p style={{ fontSize: 13, color: "#8A8680", marginTop: 8, lineHeight: 1.7 }}>{col.body}</p>
-                <a
-                  href="#"
-                  style={{ fontSize: 11, color: "#8A8680", marginTop: 12, display: "inline-block", textDecoration: "none" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
-                  onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
-                >
-                  learn more →
-                </a>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <div style={{ height: 1, background: "#E8E4DE", margin: "40px 0 0" }} />
 
-      {/* 7. The Same Place, Different Night */}
-      <section style={{ borderTop: "1px solid #E8E4DE" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "80px 40px 0" }}>
-          <Label text="The Same Place, Different Night" />
+      {/* Weekend Brunch */}
+      <section style={{ padding: "40px 0 0" }}>
+        <div style={{ padding: "0 24px" }}>
+          <SectionHead title="Weekend Brunch" />
         </div>
-        <ExploreByMoment />
-      </section>
-
-      {/* 8. Recently Approved */}
-      <section style={{ padding: "80px 0", borderTop: "1px solid #E8E4DE" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 40px" }}>
-          <Label text="Recently Approved" />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
-            {RECENTLY_APPROVED.map((v, i) => (
-              <VenueCard key={i} v={v} imgHeight={200} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 9. Browse by Vibe */}
-      <section style={{ padding: "80px 0", borderTop: "1px solid #E8E4DE" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 40px" }}>
-          <Label text="Browse by Vibe" />
-        </div>
-        <div className="scroll-row" style={{ paddingLeft: 40, gap: 8 }}>
-          {VIBES.map((v) => (
-            <button key={v} className="chip" style={{ fontFamily: "inherit" }}>{v}</button>
+        <div className="scroll-row" style={{ paddingLeft: 24, gap: 16 }}>
+          {WEEKEND_BRUNCH.map((v, i) => (
+            <OZCard key={i} name={v.name} area={v.area} img={v.img} tags={v.tags} />
           ))}
-          <div style={{ width: 40, flexShrink: 0 }} />
+          <div style={{ width: 24, flexShrink: 0 }} />
         </div>
-      </section>
-
-      {/* 10. Curated by People We Trust */}
-      <section style={{ padding: "80px 0", borderTop: "1px solid #E8E4DE" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 40px" }}>
-          <Label text="Curated by People We Trust" />
-        </div>
-        <div className="scroll-row" style={{ paddingLeft: 40, gap: 16 }}>
-          {CURATORS.map((c, i) => (
-            <div key={i} className="hoverable" style={{
-              width: 180, flexShrink: 0,
-              background: "#FFFFFF", borderBottom: "1px solid #E8E4DE", paddingBottom: 16,
-            }}>
-              <Av initials={c.initials} size={48} />
-              <p style={{ fontSize: 13, fontWeight: 500, color: "#111009", marginTop: 10, marginBottom: 3 }}>{c.name}</p>
-              <p style={{ fontSize: 11, color: "#8A8680", marginBottom: 12 }}>{c.descriptor}</p>
-              <div style={{ display: "flex", gap: 4, marginBottom: 12 }}>
-                {c.thumbs.map((t, j) => (
-                  <div key={j} style={{ width: 40, height: 40, background: t, borderRadius: 2 }} />
-                ))}
-              </div>
-              <p style={{ fontSize: 11, color: "#8A8680" }}>see their list →</p>
-            </div>
-          ))}
-          <div style={{ width: 40, flexShrink: 0 }} />
-        </div>
-      </section>
-
-      {/* 11. As Seen In */}
-      <section style={{ padding: "80px 40px", borderTop: "1px solid #E8E4DE", textAlign: "center" }}>
-        <p style={{ fontSize: 13, fontWeight: 300, fontStyle: "italic", color: "#8A8680" }}>
-          Condé Nast Traveller · Vogue India · Time Out Mumbai · The Hindu · Architectural Digest India · Mint Lounge
-        </p>
       </section>
 
     </div>
@@ -387,15 +259,51 @@ function HomeTab() {
 function ListsTab() {
   return (
     <div>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "48px 40px 0" }}>
-        <FeaturedList />
-        <div style={{ marginTop: 48, paddingBottom: 80 }}>
-          <Label text="All Lists" />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
-            {ALL_LISTS.map((l, i) => (
-              <ListCard key={i} l={l} imgHeight={180} />
-            ))}
+      {/* Featured card */}
+      <div style={{ padding: "40px 24px 0" }}>
+        <div style={{ display: "flex", minHeight: 280, borderRadius: 4, overflow: "hidden" }}>
+          <div style={{ width: "55%", background: "#DDD9D3", flexShrink: 0 }} />
+          <div style={{
+            width: "45%", background: "#F5F3F0", padding: 40,
+            display: "flex", flexDirection: "column", justifyContent: "space-between",
+          }}>
+            <div>
+              <p style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8A8680" }}>
+                Editor&apos;s Pick
+              </p>
+              <p style={{ fontSize: 22, fontWeight: 300, fontStyle: "italic", color: "#111009", lineHeight: 1.35, marginTop: 12 }}>
+                the mumbai classics you should have eaten by now
+              </p>
+              <p style={{ fontSize: 13, color: "#8A8680", lineHeight: 1.6, marginTop: 14, maxWidth: 320 }}>
+                Places that have been here longer than you. The ones that define what eating in this city actually means.
+              </p>
+            </div>
+            <p style={{ fontSize: 11, color: "#8A8680" }}>14 places · <em>by the bombay platelist team</em></p>
           </div>
+        </div>
+      </div>
+
+      {/* All lists grid */}
+      <div style={{ padding: "40px 24px 80px" }}>
+        <p style={{ fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8A8680", marginBottom: 24 }}>
+          All Lists
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+          {ALL_LISTS.map((l, i) => (
+            <div key={i} className="hoverable">
+              <div style={{ height: 180, background: l.img, borderRadius: 4 }} />
+              <div style={{ paddingTop: 12 }}>
+                <p style={{ fontSize: 13, fontStyle: "italic", fontWeight: 400, color: "#111009", marginBottom: 6 }}>
+                  {l.title}
+                </p>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                  <Av initials={l.curatorInitials} size={16} />
+                  <span style={{ fontSize: 11, color: "#8A8680" }}>{l.curator}</span>
+                </div>
+                <p style={{ fontSize: 11, color: "#8A8680" }}>{l.count} places</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -406,90 +314,68 @@ function ListsTab() {
 function FriendsTab() {
   return (
     <div>
-
-      {/* Stat line */}
-      <div style={{ paddingTop: 48, textAlign: "center" }}>
+      <div style={{ paddingTop: 40, paddingLeft: 24, paddingRight: 24, textAlign: "center" }}>
         <p style={{ fontSize: 12, color: "#8A8680" }}>
           5 friends on bombay platelist · 3 active this week
         </p>
       </div>
 
       {/* Friends' Activity */}
-      <section style={{ padding: "40px 0 32px" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 40px" }}>
-          <Label text="Friends' Activity" />
+      <section style={{ padding: "32px 0 32px" }}>
+        <div style={{ padding: "0 24px" }}>
+          <p style={{ fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8A8680", marginBottom: 20 }}>
+            Friends&apos; Activity
+          </p>
         </div>
-        <div className="scroll-row" style={{ paddingLeft: 40, gap: 16 }}>
+        <div className="scroll-row" style={{ paddingLeft: 24, gap: 16 }}>
           {ACTIVITY.map((a, i) => (
-            <div key={i} className="hoverable" style={{
-              width: 260, flexShrink: 0, borderRadius: 4, overflow: "visible",
-            }}>
+            <div key={i} className="hoverable" style={{ width: 260, flexShrink: 0, overflow: "visible" }}>
               <div style={{ position: "relative", height: 180, background: a.img, borderRadius: 4 }}>
                 {a.approved && <Diamond />}
-                <div style={{
-                  position: "absolute", bottom: -14, left: 12, zIndex: 2,
-                  border: "2px solid #FFFFFF", borderRadius: "50%",
-                }}>
+                <div style={{ position: "absolute", bottom: -14, left: 12, zIndex: 2, border: "2px solid #FFFFFF", borderRadius: "50%" }}>
                   <Av initials={a.friend.initials} size={28} />
                 </div>
               </div>
               <div style={{ paddingTop: 22, paddingBottom: 4 }}>
-                <p style={{ fontSize: 12, color: "#8A8680", marginBottom: 4 }}>
-                  {a.fname} {a.action}
-                </p>
+                <p style={{ fontSize: 12, color: "#8A8680", marginBottom: 4 }}>{a.fname} {a.action}</p>
                 <p style={{ fontSize: 15, fontWeight: 500, color: "#111009", marginBottom: 3 }}>{a.venue}</p>
                 <p style={{ fontSize: 12, color: "#8A8680" }}>{a.neighbourhood} · {a.cuisine}</p>
               </div>
             </div>
           ))}
-          <div style={{ width: 40, flexShrink: 0 }} />
+          <div style={{ width: 24, flexShrink: 0 }} />
         </div>
       </section>
 
-      <div style={{ height: 1, background: "#E8E4DE", margin: "0 40px" }} />
-
-      {/* Your List */}
+      <div style={{ height: 1, background: "#E8E4DE", margin: "0 24px" }} />
       <YourList />
+      <div style={{ height: 1, background: "#E8E4DE", margin: "0 24px" }} />
 
-      <div style={{ height: 1, background: "#E8E4DE", margin: "0 40px" }} />
-
-      {/* What Your Friends Rate Highest */}
-      <section style={{ padding: "40px 0 80px" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 40px" }}>
-          <Label text="What Your Friends Rate Highest" />
-          <div>
-            {RANKED.map((r, i) => (
-              <div key={i}>
-                <div className="hoverable" style={{
-                  display: "grid",
-                  gridTemplateColumns: "32px 1fr 160px auto 80px",
-                  alignItems: "center",
-                  padding: "14px 0",
-                  gap: 16,
-                }}>
-                  <span style={{ fontSize: 11, color: "#8A8680", fontWeight: 300 }}>{r.rank}</span>
-                  <span style={{ fontSize: 15, fontWeight: 500, color: "#111009" }}>{r.venue}</span>
-                  <span style={{ fontSize: 12, color: "#8A8680" }}>{r.neighbourhood}</span>
-                  <div className="avatar-stack">
-                    {r.friends.slice(0, 3).map((fr, j) => (
-                      <div key={j} className="av">
-                        <Av initials={fr.initials} size={18} />
-                      </div>
-                    ))}
-                  </div>
-                  <span style={{ fontSize: 11, color: "#8A8680", fontStyle: "italic", textAlign: "right" }}>
-                    {r.rating}
-                  </span>
-                </div>
-                {i < RANKED.length - 1 && (
-                  <div style={{ height: 1, background: "#E8E4DE" }} />
-                )}
+      {/* Ranked */}
+      <section style={{ padding: "32px 24px 80px" }}>
+        <p style={{ fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8A8680", marginBottom: 20 }}>
+          What Your Friends Rate Highest
+        </p>
+        {RANKED.map((r, i) => (
+          <div key={i}>
+            <div className="hoverable" style={{
+              display: "grid", gridTemplateColumns: "32px 1fr 160px auto 80px",
+              alignItems: "center", padding: "14px 0", gap: 16,
+            }}>
+              <span style={{ fontSize: 11, color: "#8A8680", fontWeight: 300 }}>{r.rank}</span>
+              <span style={{ fontSize: 15, fontWeight: 500, color: "#111009" }}>{r.venue}</span>
+              <span style={{ fontSize: 12, color: "#8A8680" }}>{r.neighbourhood}</span>
+              <div className="avatar-stack">
+                {r.friends.slice(0, 3).map((fr, j) => (
+                  <div key={j} className="av"><Av initials={fr.initials} size={18} /></div>
+                ))}
               </div>
-            ))}
+              <span style={{ fontSize: 11, color: "#8A8680", fontStyle: "italic", textAlign: "right" }}>{r.rating}</span>
+            </div>
+            {i < RANKED.length - 1 && <div style={{ height: 1, background: "#E8E4DE" }} />}
           </div>
-        </div>
+        ))}
       </section>
-
     </div>
   );
 }
@@ -498,7 +384,7 @@ function FriendsTab() {
 function ProfileTab() {
   return (
     <div style={{ paddingTop: 120, textAlign: "center", paddingBottom: 80 }}>
-      <div style={{ display: "inline-flex", justifyContent: "center" }}>
+      <div style={{ display: "inline-flex" }}>
         <Av initials="P" size={64} />
       </div>
       <p style={{ fontSize: 18, fontWeight: 500, color: "#111009", marginTop: 16 }}>P.</p>
@@ -519,7 +405,7 @@ function SiteFooter() {
     <footer style={{
       borderTop: "1px solid #E8E4DE", height: 64,
       display: "flex", alignItems: "center",
-      justifyContent: "space-between", padding: "0 40px",
+      justifyContent: "space-between", padding: "0 24px",
     }}>
       <span style={{ fontSize: 12, color: "#8A8680" }}>bombay platelist</span>
       <span style={{ fontSize: 12, color: "#8A8680", fontStyle: "italic" }}>curating mumbai</span>
@@ -527,74 +413,102 @@ function SiteFooter() {
   );
 }
 
-/* ── TAB LAYOUT (default export) ─────────────────────────────── */
-const TABS = ["home", "browse", "lists", "friends", "profile"] as const;
-type Tab = (typeof TABS)[number];
+/* ── SIDEBAR NAV ITEM ────────────────────────────────────────── */
+type Tab = "home" | "browse" | "lists" | "friends" | "profile";
+const NAV = [
+  { tab: "home"    as Tab, label: "Home",     icon: Home     },
+  { tab: "browse"  as Tab, label: "Explore",  icon: Search   },
+  { tab: "lists"   as Tab, label: "Lists",    icon: BookOpen },
+  { tab: "friends" as Tab, label: "Activity", icon: Users    },
+  { tab: "profile" as Tab, label: "Profile",  icon: User     },
+];
 
+function NavItem({
+  item, active, onClick,
+}: {
+  item: typeof NAV[0]; active: boolean; onClick: () => void;
+}) {
+  const Icon = item.icon;
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        display: "flex", alignItems: "center", gap: 12,
+        width: "100%", padding: "12px 24px",
+        background: "none", border: "none", cursor: "pointer",
+        fontFamily: "inherit",
+        color: active ? "#111009" : "#8A8680",
+        transition: "color 150ms ease",
+      }}
+      onMouseEnter={(e) => { if (!active) e.currentTarget.style.color = "#111009"; }}
+      onMouseLeave={(e) => { if (!active) e.currentTarget.style.color = "#8A8680"; }}
+    >
+      <Icon size={18} strokeWidth={active ? 2 : 1.5} />
+      <span style={{ fontSize: 14, fontWeight: active ? 500 : 400 }}>{item.label}</span>
+    </button>
+  );
+}
+
+/* ── TAB LAYOUT (default export) ─────────────────────────────── */
 export default function TabLayout() {
   const [active, setActive] = useState<Tab>("home");
 
   return (
-    <div style={{ background: "#FFFFFF", minHeight: "100vh" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: "#FFFFFF" }}>
 
-      {/* Sticky header */}
-      <header style={{
-        position: "sticky", top: 0, zIndex: 50,
-        height: 52, background: "#FFFFFF",
-        borderBottom: "1px solid #E8E4DE",
-        display: "flex", alignItems: "center",
-        padding: "0 40px", justifyContent: "space-between",
+      {/* ── Fixed left sidebar ── */}
+      <aside style={{
+        position: "fixed", left: 0, top: 0, bottom: 0,
+        width: 200, background: "#FFFFFF",
+        borderRight: "1px solid #E8E4DE",
+        display: "flex", flexDirection: "column",
+        zIndex: 50,
       }}>
-        <span style={{ fontSize: 15, fontWeight: 400, color: "#111009", letterSpacing: "-0.01em" }}>
-          bombay platelist
-        </span>
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div className="avatar-stack">
-            {[F.PA, F.PK, F.AR].map((f, i) => (
-              <div key={i} className="av"><Av initials={f.initials} size={24} /></div>
-            ))}
-          </div>
-          <span style={{ fontSize: 12, color: "#8A8680" }}>mumbai</span>
+        {/* Logo */}
+        <div style={{ padding: "28px 24px 0" }}>
+          <p style={{
+            fontSize: 10, color: "#8A8680",
+            letterSpacing: "0.12em", textTransform: "uppercase",
+          }}>Mumbai</p>
+          <p style={{ fontSize: 16, fontWeight: 500, color: "#111009", marginTop: 4, lineHeight: 1.2 }}>
+            bombay platelist
+          </p>
         </div>
-      </header>
 
-      {/* Tab bar — sticky below header */}
-      <nav style={{
-        position: "sticky", top: 52, zIndex: 40,
-        background: "#FFFFFF", borderBottom: "1px solid #E8E4DE",
-        display: "flex",
-      }}>
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActive(tab)}
-            style={{
-              padding: "0 20px", height: 44,
-              display: "inline-flex", alignItems: "center",
-              fontSize: 13, fontWeight: 400, fontFamily: "inherit",
-              border: "none",
-              borderBottom: active === tab ? "2px solid #111009" : "2px solid transparent",
-              background: "transparent",
-              color: active === tab ? "#111009" : "#8A8680",
-              cursor: "pointer",
-              transition: "color 150ms ease",
-              marginBottom: -1,
-              outline: "none",
-            }}
-          >
-            {tab}
-          </button>
-        ))}
-      </nav>
+        {/* Nav */}
+        <nav style={{ flex: 1, marginTop: 32 }}>
+          {NAV.map((item) => (
+            <NavItem
+              key={item.tab}
+              item={item}
+              active={active === item.tab}
+              onClick={() => setActive(item.tab)}
+            />
+          ))}
+        </nav>
 
-      {/* Tab panels — instant show/hide, no animation */}
-      <div style={{ display: active === "home"    ? "block" : "none" }}><HomeTab /></div>
-      <div style={{ display: active === "browse"  ? "block" : "none" }}><BrowseTab /></div>
-      <div style={{ display: active === "lists"   ? "block" : "none" }}><ListsTab /></div>
-      <div style={{ display: active === "friends" ? "block" : "none" }}><FriendsTab /></div>
-      <div style={{ display: active === "profile" ? "block" : "none" }}><ProfileTab /></div>
+        {/* Bottom city label */}
+        <div style={{ padding: "0 24px 28px" }}>
+          <p style={{ fontSize: 10, color: "#8A8680" }}>Current City</p>
+          <p style={{ fontSize: 13, fontWeight: 500, color: "#111009", marginTop: 2 }}>Mumbai</p>
+          <p style={{ fontSize: 10, color: "#8A8680", fontStyle: "italic", marginTop: 3 }}>
+            Curating Mumbai
+          </p>
+        </div>
+      </aside>
 
-      <SiteFooter />
+      {/* ── Main content (offset by sidebar) ── */}
+      <main style={{ marginLeft: 200, flex: 1, minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: active === "home"    ? "block" : "none" }}><HomeTab /></div>
+          <div style={{ display: active === "browse"  ? "block" : "none" }}><BrowseTab /></div>
+          <div style={{ display: active === "lists"   ? "block" : "none" }}><ListsTab /></div>
+          <div style={{ display: active === "friends" ? "block" : "none" }}><FriendsTab /></div>
+          <div style={{ display: active === "profile" ? "block" : "none" }}><ProfileTab /></div>
+        </div>
+        <SiteFooter />
+      </main>
+
     </div>
   );
 }
