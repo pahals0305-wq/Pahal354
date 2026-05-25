@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Home, Search, BookOpen, Users, User } from "lucide-react";
 import YourList from "./YourList";
 import BrowseTab from "./BrowseTab";
-import StatsCounter from "./StatsCounter";
+import { restaurants } from "@/data/restaurants";
 
 /* ── TYPES ───────────────────────────────────────────────────── */
 type Friend = { initials: string };
@@ -21,67 +21,11 @@ type RankedData = {
   friends: Friend[]; rating: string;
 };
 
-/* ── DATA ────────────────────────────────────────────────────── */
+/* ── SOCIAL / UI DATA ────────────────────────────────────────── */
 const F: Record<string, Friend> = {
   PA: { initials: "PA" }, PK: { initials: "PK" }, AR: { initials: "AR" },
   SM: { initials: "SM" }, VN: { initials: "VN" }, TJ: { initials: "TJ" },
 };
-
-const HERO_VENUES = [
-  { img: "#E4E0D8", tags: "Contemporary Indian, Date Night, Lower Parel" },
-  { img: "#EAE7E2", tags: "Tasting Menu, Modern Indian, Special Occasion" },
-  { img: "#DDD9D3", tags: "Contemporary, Long Lunch, Colaba" },
-  { img: "#E0DDD6", tags: "Japanese, Date Night, Omakase, BKC" },
-  { img: "#E4E0D8", tags: "Thai, Special Occasion, Lower Parel" },
-  { img: "#EAE7E2", tags: "Modern Indian, Tasting Menu, Jio World Centre" },
-  { img: "#DDD9D3", tags: "Italian, Date Night, BKC" },
-  { img: "#E0DDD6", tags: "Contemporary Indian, Counter Dining, Fort" },
-  { img: "#E4E0D8", tags: "Seafood, Heritage, Long Lunch, Fort" },
-];
-
-const NEW_IN_MUMBAI = [
-  { name: "Sixteen 33",    area: "Bandra",      img: "#E4E0D8", tags: "Contemporary, New Opening, Date Night" },
-  { name: "Kyma",          area: "BKC",          img: "#EAE7E2", tags: "Greek Seafood, New Opening" },
-  { name: "Pompa",         area: "Bandra",       img: "#DDD9D3", tags: "Mexican, Casual, Cocktails" },
-  { name: "Lyla",          area: "BKC",          img: "#E0DDD6", tags: "Spanish, Wine Bar, Tapas" },
-  { name: "Nusara",        area: "Lower Parel",  img: "#E4E0D8", tags: "Thai, Special Occasion" },
-  { name: "Gigi",          area: "Bandra",       img: "#EAE7E2", tags: "Italian, Date Night, Pasta" },
-  { name: "Indian Accent", area: "Jio World Centre", img: "#DDD9D3", tags: "Modern Indian, Tasting Menu" },
-  { name: "Bodega39",      area: "Goregaon",     img: "#E0DDD6", tags: "Bar & Kitchen, Casual" },
-];
-
-const EDITORS_PICKS = [
-  { name: "Masque",              area: "Mahalaxmi",  img: "#EAE7E2", tags: "Modern Indian, Tasting Menu, Special Occasion" },
-  { name: "The Table",           area: "Colaba",     img: "#E0DDD6", tags: "Contemporary, Date Night, Long Lunch" },
-  { name: "Ekaa",                area: "Fort",       img: "#E4E0D8", tags: "Contemporary Indian, Counter Dining" },
-  { name: "Torii",               area: "BKC",        img: "#DDD9D3", tags: "Japanese, Omakase, Date Night" },
-  { name: "Bastian",             area: "Bandra",     img: "#EAE7E2", tags: "Seafood, Casual, Groups" },
-  { name: "Mahesh Lunch Home",   area: "Fort",       img: "#E4E0D8", tags: "Seafood, Heritage, Lunch" },
-  { name: "The Bombay Canteen",  area: "Lower Parel",img: "#E0DDD6", tags: "Contemporary Indian, Groups, Bar" },
-  { name: "Tresind",             area: "BKC",        img: "#DDD9D3", tags: "Progressive Indian, Special Occasion" },
-];
-
-const LATE_NIGHT = [
-  { name: "Bademiyaan",           area: "Colaba",      img: "#DDD9D3", tags: "Street Food, Open Till 3:30am, Iconic" },
-  { name: "Woodside Inn",         area: "Bandra",      img: "#E4E0D8", tags: "Bar, Late Night, Walk-ins" },
-  { name: "Lord of the Drinks",   area: "Lower Parel", img: "#EAE7E2", tags: "Bar, Cocktails, Late Night" },
-  { name: "Sigdi",                area: "Bandra",      img: "#E0DDD6", tags: "Street Food, Open Till 6am" },
-  { name: "14th Street Dessert",  area: "Fort",        img: "#DDD9D3", tags: "Desserts, Open Till 5am" },
-  { name: "Good Flippin Burgers", area: "Juhu",        img: "#E4E0D8", tags: "Burgers, Open Till 3am" },
-  { name: "Trattoria",            area: "Colaba",      img: "#EAE7E2", tags: "Italian, Open Till 4am, Taj" },
-  { name: "Hyde",                 area: "South Bombay",img: "#E0DDD6", tags: "Bar, Late Night, Cocktails" },
-];
-
-const WEEKEND_BRUNCH = [
-  { name: "Prithvi Cafe",     area: "Juhu",      img: "#E0DDD6", tags: "Café, Slow Morning, Heritage, Outdoor" },
-  { name: "Pali Village Café",area: "Pali Hill", img: "#E4E0D8", tags: "All-day, Brunch, Eggs, Bandra" },
-  { name: "The Table",        area: "Colaba",    img: "#EAE7E2", tags: "Sunday Brunch, Contemporary, Worth It" },
-  { name: "Candies",          area: "Bandra",    img: "#DDD9D3", tags: "Café, Nostalgic, Bandra Icon" },
-  { name: "Sequel",           area: "Bandra",    img: "#E0DDD6", tags: "Health Café, Brunch, Light" },
-  { name: "Bustle",           area: "Bandra",    img: "#E4E0D8", tags: "All-day, Casual, Good Coffee" },
-  { name: "Bayroute",         area: "Juhu",      img: "#EAE7E2", tags: "Lebanese, Mezze, Slow Lunch" },
-  { name: "O Pedro",          area: "BKC",       img: "#DDD9D3", tags: "Goan, Brunch, Festive, BKC" },
-];
 
 const ALL_LISTS: ListData[] = [
   { title: "best for a long lunch",                          curator: "by P.",                        curatorInitials: "P",  count: 9,  img: "#E4E0D8" },
@@ -120,6 +64,23 @@ const RANKED: RankedData[] = [
   { rank: 10, venue: "Lucky Restaurant",   neighbourhood: "Bandra",      friends: [F.PK, F.AR, F.PA], rating: "go back" },
 ];
 
+/* ── HERO STRIP — pure mood images, no venue names ──────────── */
+const heroImg = (id: string, tags: string) => ({
+  img: `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=600&q=75`,
+  tags,
+});
+const HERO_IMAGES = [
+  heroImg("1555396273-b63c3e1e7d41", "Contemporary Indian · Date Night · Lower Parel"),
+  heroImg("1414235077428-338989a2e8c0", "Tasting Menu · Modern Indian · Special Occasion"),
+  heroImg("1579871494447-9811cf80d66c", "Japanese · Omakase · BKC"),
+  heroImg("1504674900247-0877df9cc836", "Fine Dining · Seasonal Menu · Mahalaxmi"),
+  heroImg("1499028344343-cd173f05b3a7", "Modern Indian · Worth the Travel · Fort"),
+  heroImg("1565299624946-b28f40a0ae38", "Italian · Date Night · Candlelit"),
+  heroImg("1540189549336-e6e99c3679fe", "Lebanese · Mezze Spread · Juhu"),
+  heroImg("1543007631-283050bb3e8c", "Cocktail Bar · After Midnight · South Bombay"),
+  heroImg("1495474472287-4d71bcdd2085", "Sunday Brunch · Slow Eggs · Bandra"),
+];
+
 /* ── SHARED MICRO-COMPONENTS ─────────────────────────────────── */
 function Av({ initials, size = 24 }: { initials: string; size?: number }) {
   return (
@@ -155,20 +116,32 @@ function OZCard({
           <p style={{ fontSize: 12, color: "#8A8680", marginTop: 2, marginBottom: 10 }}>{area}</p>
         </>
       )}
-      <div style={{ height: imgHeight, background: img, borderRadius: 4 }} />
+      <div style={{ height: imgHeight, borderRadius: 4, overflow: "hidden", background: "#E8E4DE" }}>
+        <img
+          src={img}
+          alt=""
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          onError={(e) => { e.currentTarget.style.display = "none"; }}
+        />
+      </div>
       <p style={{ fontSize: 11, color: "#8A8680", marginTop: 8, lineHeight: 1.6 }}>{tags}</p>
     </div>
   );
 }
 
-/* ── SECTION HEADER (title + Show all) ──────────────────────── */
-function SectionHead({ title }: { title: string }) {
+/* ── SECTION HEADER ──────────────────────────────────────────── */
+function SectionHead({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-      <p style={{ fontSize: 15, fontWeight: 500, color: "#111009" }}>{title}</p>
+    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 20 }}>
+      <div>
+        <p style={{ fontSize: 15, fontWeight: 500, color: "#111009" }}>{title}</p>
+        {subtitle && (
+          <p style={{ fontSize: 12, color: "#8A8680", fontStyle: "italic", marginTop: 4 }}>{subtitle}</p>
+        )}
+      </div>
       <a
         href="#"
-        style={{ fontSize: 13, color: "#8A8680", textDecoration: "none" }}
+        style={{ fontSize: 13, color: "#8A8680", textDecoration: "none", flexShrink: 0, marginLeft: 16, paddingTop: subtitle ? 2 : 0 }}
         onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
         onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
       >
@@ -180,77 +153,70 @@ function SectionHead({ title }: { title: string }) {
 
 /* ── HOME TAB ────────────────────────────────────────────────── */
 function HomeTab() {
+  const newInMumbai   = restaurants.filter(r => r.tags.includes("New in Mumbai")).slice(0, 8);
+  const editorsPicks  = restaurants.filter(r => r.tags.includes("Editor's Pick")).slice(0, 8);
+  const girlsNight    = restaurants.filter(r => r.tags.includes("Girls' Night Out")).slice(0, 8);
+  const dateNight     = restaurants.filter(r => r.tags.includes("Date Night Done Right")).slice(0, 8);
+  const afterMidnight = restaurants.filter(r => r.tags.includes("After Midnight")).slice(0, 8);
+  const oldBombay     = restaurants.filter(r => r.tags.includes("Old Bombay")).slice(0, 8);
+  const sundayMorning = restaurants.filter(r => r.tags.includes("Sunday Morning")).slice(0, 8);
+  const hiddenMumbai  = restaurants.filter(r => r.tags.includes("Hidden Mumbai")).slice(0, 8);
+  const worthTravel   = restaurants.filter(r => r.tags.includes("Worth the Travel")).slice(0, 8);
+  const pahalsPicks   = restaurants.filter(r => r.pahalsPick).slice(0, 8);
+
+  const Divider = () => <div style={{ height: 1, background: "#E8E4DE", margin: "40px 0 0" }} />;
+
+  function Section({
+    title, subtitle, data,
+  }: {
+    title: string; subtitle?: string;
+    data: typeof restaurants;
+  }) {
+    return (
+      <>
+        <Divider />
+        <section style={{ padding: "40px 0 0" }}>
+          <div style={{ padding: "0 24px" }}>
+            <SectionHead title={title} subtitle={subtitle} />
+          </div>
+          <div className="scroll-row" style={{ paddingLeft: 24, gap: 16 }}>
+            {data.map((r) => (
+              <OZCard
+                key={r.id}
+                name={r.name}
+                area={r.area}
+                img={r.image}
+                tags={r.cuisine.join(" · ")}
+              />
+            ))}
+            <div style={{ width: 24, flexShrink: 0 }} />
+          </div>
+        </section>
+      </>
+    );
+  }
+
   return (
     <div style={{ paddingBottom: 80 }}>
 
-      {/* Hero image strip — no names, just images + tags */}
+      {/* Hero image strip — mood only, no names */}
       <div className="scroll-row" style={{ padding: "32px 0 32px 24px", gap: 12 }}>
-        {HERO_VENUES.map((v, i) => (
+        {HERO_IMAGES.map((v, i) => (
           <OZCard key={i} img={v.img} tags={v.tags} imgHeight={280} />
         ))}
         <div style={{ width: 24, flexShrink: 0 }} />
       </div>
 
-      <div style={{ height: 1, background: "#E8E4DE" }} />
-
-      {/* New in Mumbai */}
-      <section style={{ padding: "40px 0 0" }}>
-        <div style={{ padding: "0 24px" }}>
-          <SectionHead title="New in Mumbai" />
-        </div>
-        <div className="scroll-row" style={{ paddingLeft: 24, gap: 16 }}>
-          {NEW_IN_MUMBAI.map((v, i) => (
-            <OZCard key={i} name={v.name} area={v.area} img={v.img} tags={v.tags} />
-          ))}
-          <div style={{ width: 24, flexShrink: 0 }} />
-        </div>
-      </section>
-
-      <div style={{ height: 1, background: "#E8E4DE", margin: "40px 0 0" }} />
-
-      {/* Editor's Picks */}
-      <section style={{ padding: "40px 0 0" }}>
-        <div style={{ padding: "0 24px" }}>
-          <SectionHead title="Editor's Picks" />
-        </div>
-        <div className="scroll-row" style={{ paddingLeft: 24, gap: 16 }}>
-          {EDITORS_PICKS.map((v, i) => (
-            <OZCard key={i} name={v.name} area={v.area} img={v.img} tags={v.tags} />
-          ))}
-          <div style={{ width: 24, flexShrink: 0 }} />
-        </div>
-      </section>
-
-      <div style={{ height: 1, background: "#E8E4DE", margin: "40px 0 0" }} />
-
-      {/* Late Night Mumbai */}
-      <section style={{ padding: "40px 0 0" }}>
-        <div style={{ padding: "0 24px" }}>
-          <SectionHead title="Late Night Mumbai" />
-        </div>
-        <div className="scroll-row" style={{ paddingLeft: 24, gap: 16 }}>
-          {LATE_NIGHT.map((v, i) => (
-            <OZCard key={i} name={v.name} area={v.area} img={v.img} tags={v.tags} />
-          ))}
-          <div style={{ width: 24, flexShrink: 0 }} />
-        </div>
-      </section>
-
-      <div style={{ height: 1, background: "#E8E4DE", margin: "40px 0 0" }} />
-
-      {/* Weekend Brunch */}
-      <section style={{ padding: "40px 0 0" }}>
-        <div style={{ padding: "0 24px" }}>
-          <SectionHead title="Weekend Brunch" />
-        </div>
-        <div className="scroll-row" style={{ paddingLeft: 24, gap: 16 }}>
-          {WEEKEND_BRUNCH.map((v, i) => (
-            <OZCard key={i} name={v.name} area={v.area} img={v.img} tags={v.tags} />
-          ))}
-          <div style={{ width: 24, flexShrink: 0 }} />
-        </div>
-      </section>
-
+      <Section title="New in Mumbai"          subtitle="what just opened"                                              data={newInMumbai}   />
+      <Section title="Editor's Picks"         subtitle="the list we'd actually use"                                   data={editorsPicks}  />
+      <Section title="Girls' Night Out"       subtitle="cocktail bars, see-and-be-seen spots, Bandra to Juhu"         data={girlsNight}    />
+      <Section title="Date Night Done Right"  subtitle="dim rooms, bookable tables, places that mean something"       data={dateNight}     />
+      <Section title="After Midnight"         subtitle="still open, still worth it, no judgment"                     data={afterMidnight} />
+      <Section title="Old Bombay"             subtitle="restaurants that have outlasted everything the city threw at them" data={oldBombay} />
+      <Section title="Sunday Morning"         subtitle="slow eggs, strong coffee, nowhere to be"                     data={sundayMorning} />
+      <Section title="Hidden Mumbai"          subtitle="no gram presence. locals only. you're welcome"               data={hiddenMumbai}  />
+      <Section title="Worth the Travel"       subtitle="the spots people actually fly in for"                        data={worthTravel}   />
+      <Section title="Pahal's Picks"          subtitle="personally vetted. been there. would go back."              data={pahalsPicks}   />
     </div>
   );
 }
@@ -413,7 +379,7 @@ function SiteFooter() {
   );
 }
 
-/* ── SIDEBAR NAV ITEM ────────────────────────────────────────── */
+/* ── SIDEBAR NAV ─────────────────────────────────────────────── */
 type Tab = "home" | "browse" | "lists" | "friends" | "profile";
 const NAV = [
   { tab: "home"    as Tab, label: "Home",     icon: Home     },
@@ -449,14 +415,14 @@ function NavItem({
   );
 }
 
-/* ── TAB LAYOUT (default export) ─────────────────────────────── */
+/* ── TAB LAYOUT ──────────────────────────────────────────────── */
 export default function TabLayout() {
   const [active, setActive] = useState<Tab>("home");
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "#FFFFFF" }}>
 
-      {/* ── Fixed left sidebar ── */}
+      {/* Fixed left sidebar */}
       <aside style={{
         position: "fixed", left: 0, top: 0, bottom: 0,
         width: 200, background: "#FFFFFF",
@@ -464,40 +430,27 @@ export default function TabLayout() {
         display: "flex", flexDirection: "column",
         zIndex: 50,
       }}>
-        {/* Logo */}
         <div style={{ padding: "28px 24px 0" }}>
-          <p style={{
-            fontSize: 10, color: "#8A8680",
-            letterSpacing: "0.12em", textTransform: "uppercase",
-          }}>Mumbai</p>
+          <p style={{ fontSize: 10, color: "#8A8680", letterSpacing: "0.12em", textTransform: "uppercase" }}>Mumbai</p>
           <p style={{ fontSize: 16, fontWeight: 500, color: "#111009", marginTop: 4, lineHeight: 1.2 }}>
             bombay platelist
           </p>
         </div>
 
-        {/* Nav */}
         <nav style={{ flex: 1, marginTop: 32 }}>
           {NAV.map((item) => (
-            <NavItem
-              key={item.tab}
-              item={item}
-              active={active === item.tab}
-              onClick={() => setActive(item.tab)}
-            />
+            <NavItem key={item.tab} item={item} active={active === item.tab} onClick={() => setActive(item.tab)} />
           ))}
         </nav>
 
-        {/* Bottom city label */}
         <div style={{ padding: "0 24px 28px" }}>
           <p style={{ fontSize: 10, color: "#8A8680" }}>Current City</p>
           <p style={{ fontSize: 13, fontWeight: 500, color: "#111009", marginTop: 2 }}>Mumbai</p>
-          <p style={{ fontSize: 10, color: "#8A8680", fontStyle: "italic", marginTop: 3 }}>
-            Curating Mumbai
-          </p>
+          <p style={{ fontSize: 10, color: "#8A8680", fontStyle: "italic", marginTop: 3 }}>Curating Mumbai</p>
         </div>
       </aside>
 
-      {/* ── Main content (offset by sidebar) ── */}
+      {/* Main content */}
       <main style={{ marginLeft: 200, flex: 1, minHeight: "100vh", display: "flex", flexDirection: "column" }}>
         <div style={{ flex: 1 }}>
           <div style={{ display: active === "home"    ? "block" : "none" }}><HomeTab /></div>

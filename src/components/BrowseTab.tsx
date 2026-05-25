@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
+import { restaurants, type Restaurant } from "@/data/restaurants";
 
 /* ── TYPES ───────────────────────────────────────────────────── */
 type FilterType = "type" | "area" | "cuisine" | "occasion" | "vibe";
@@ -9,9 +10,15 @@ type VenueResult = {
   venueType: string; approved: boolean; img: string;
 };
 
-/* ── PALETTE ─────────────────────────────────────────────────── */
-const IMGS = ["#E4E0D8", "#EAE7E2", "#DDD9D3", "#E0DDD6"];
-const img = (i: number) => IMGS[i % 4];
+/* ── RESTAURANT → RESULT HELPER ──────────────────────────────── */
+const toResult = (r: Restaurant): VenueResult => ({
+  name: r.name,
+  neighbourhood: r.area,
+  cuisine: r.cuisine[0],
+  venueType: "restaurant",
+  approved: r.pahalsPick,
+  img: r.image,
+});
 
 /* ── CATEGORY DATA ───────────────────────────────────────────── */
 const PLACE_TYPES = [
@@ -89,114 +96,31 @@ const VIBES = [
   "by the water", "rooftop views", "no reservations needed", "book weeks ahead",
 ];
 
-/* ── RESULTS DATA ────────────────────────────────────────────── */
+/* ── RESULTS — derived from real restaurant data ─────────────── */
 const RESULTS: Record<string, VenueResult[]> = {
-  "date night": [
-    { name: "Sixteen 33",           neighbourhood: "Bandra",      cuisine: "Contemporary",        venueType: "restaurant", approved: true,  img: img(0) },
-    { name: "Torii",                neighbourhood: "BKC",         cuisine: "Japanese",            venueType: "restaurant", approved: true,  img: img(1) },
-    { name: "Gigi",                 neighbourhood: "Bandra",      cuisine: "Italian",             venueType: "restaurant", approved: true,  img: img(2) },
-    { name: "CinCin",               neighbourhood: "BKC",         cuisine: "Italian",             venueType: "restaurant", approved: true,  img: img(3) },
-    { name: "Masque",               neighbourhood: "Mahalaxmi",   cuisine: "Modern Indian",       venueType: "restaurant", approved: true,  img: img(0) },
-    { name: "Ekaa",                 neighbourhood: "Fort",        cuisine: "Contemporary Indian", venueType: "restaurant", approved: true,  img: img(1) },
-    { name: "The Table",            neighbourhood: "Colaba",      cuisine: "Contemporary",        venueType: "restaurant", approved: true,  img: img(2) },
-    { name: "Lyla",                 neighbourhood: "BKC",         cuisine: "Spanish",             venueType: "restaurant", approved: true,  img: img(3) },
-    { name: "Nusara",               neighbourhood: "Lower Parel", cuisine: "Thai",                venueType: "restaurant", approved: true,  img: img(0) },
-    { name: "Olive Bar & Kitchen",  neighbourhood: "Bandra",      cuisine: "Mediterranean",       venueType: "restaurant", approved: true,  img: img(1) },
-    { name: "Tresind",              neighbourhood: "BKC",         cuisine: "Progressive Indian",  venueType: "restaurant", approved: true,  img: img(2) },
-    { name: "Izumi",                neighbourhood: "Bandra",      cuisine: "Japanese",            venueType: "restaurant", approved: true,  img: img(3) },
-  ],
-  "Bandra": [
-    { name: "Hakkasan",             neighbourhood: "Bandra", cuisine: "Chinese",     venueType: "restaurant", approved: true,  img: img(0) },
-    { name: "Bastian",              neighbourhood: "Bandra", cuisine: "Seafood",     venueType: "restaurant", approved: true,  img: img(1) },
-    { name: "Gigi",                 neighbourhood: "Bandra", cuisine: "Italian",     venueType: "restaurant", approved: true,  img: img(2) },
-    { name: "Sixteen 33",           neighbourhood: "Bandra", cuisine: "Contemporary",venueType: "restaurant", approved: true,  img: img(3) },
-    { name: "Woodside Inn",         neighbourhood: "Bandra", cuisine: "Bar",         venueType: "bar",        approved: false, img: img(0) },
-    { name: "Foo",                  neighbourhood: "Bandra", cuisine: "Pan-Asian",   venueType: "restaurant", approved: true,  img: img(1) },
-    { name: "La Loca Maria",        neighbourhood: "Bandra", cuisine: "Mexican",     venueType: "restaurant", approved: false, img: img(2) },
-    { name: "Izumi",                neighbourhood: "Bandra", cuisine: "Japanese",    venueType: "restaurant", approved: true,  img: img(3) },
-    { name: "Mizu",                 neighbourhood: "Bandra", cuisine: "Japanese",    venueType: "restaurant", approved: false, img: img(0) },
-    { name: "Pomodoro",             neighbourhood: "Bandra", cuisine: "Italian",     venueType: "restaurant", approved: false, img: img(1) },
-    { name: "Tokyo Matcha Bar",     neighbourhood: "Bandra", cuisine: "Café",        venueType: "café",       approved: false, img: img(2) },
-    { name: "Kepchaki Momos",       neighbourhood: "Bandra", cuisine: "Tibetan",     venueType: "restaurant", approved: false, img: img(3) },
-    { name: "Bustle",               neighbourhood: "Bandra", cuisine: "All-day",     venueType: "café",       approved: false, img: img(0) },
-    { name: "Torii",                neighbourhood: "Bandra", cuisine: "Japanese",    venueType: "restaurant", approved: true,  img: img(1) },
-  ],
-  "japanese": [
-    { name: "Torii",                neighbourhood: "BKC",     cuisine: "Japanese", venueType: "restaurant", approved: true,  img: img(0) },
-    { name: "Izumi",                neighbourhood: "Bandra",  cuisine: "Japanese", venueType: "restaurant", approved: true,  img: img(1) },
-    { name: "Mizu",                 neighbourhood: "Bandra",  cuisine: "Japanese", venueType: "restaurant", approved: false, img: img(2) },
-    { name: "Wasabi by Morimoto",   neighbourhood: "Colaba",  cuisine: "Japanese", venueType: "restaurant", approved: true,  img: img(3) },
-    { name: "Origami",              neighbourhood: "Multiple",cuisine: "Japanese", venueType: "restaurant", approved: false, img: img(0) },
-    { name: "Takumi",               neighbourhood: "Multiple",cuisine: "Japanese", venueType: "restaurant", approved: false, img: img(1) },
-    { name: "Kuuraku",              neighbourhood: "Bandra",  cuisine: "Japanese", venueType: "restaurant", approved: false, img: img(2) },
-    { name: "Amaru",                neighbourhood: "Bandra",  cuisine: "Japanese", venueType: "restaurant", approved: false, img: img(3) },
-    { name: "Crisol",               neighbourhood: "Juhu",    cuisine: "Japanese", venueType: "restaurant", approved: false, img: img(0) },
-    { name: "Baoji Asian Home",     neighbourhood: "Andheri", cuisine: "Japanese", venueType: "restaurant", approved: false, img: img(1) },
-  ],
-  "hidden gem": [
-    { name: "Madeira & Mime",       neighbourhood: "Vikhroli",   cuisine: "European",            venueType: "restaurant", approved: true,  img: img(0) },
-    { name: "Across",               neighbourhood: "Kala Ghoda", cuisine: "Himalayan",           venueType: "restaurant", approved: true,  img: img(1) },
-    { name: "Toa.66",               neighbourhood: "Churchgate", cuisine: "Thai",                venueType: "restaurant", approved: true,  img: img(2) },
-    { name: "Nandan Coffee",        neighbourhood: "Fort",       cuisine: "Café",                venueType: "café",       approved: false, img: img(3) },
-    { name: "Papa's",               neighbourhood: "Bandra",     cuisine: "Indian",              venueType: "restaurant", approved: false, img: img(0) },
-    { name: "Do's Fast Food",       neighbourhood: "Dadar",      cuisine: "Street Food",         venueType: "restaurant", approved: false, img: img(1) },
-    { name: "Shelter by Javaphile", neighbourhood: "Versova",    cuisine: "Café",                venueType: "café",       approved: false, img: img(2) },
-    { name: "Breve",                neighbourhood: "Multiple",   cuisine: "Café",                venueType: "café",       approved: false, img: img(3) },
-    { name: "By The Mekong",        neighbourhood: "Multiple",   cuisine: "Pan-Asian",           venueType: "restaurant", approved: false, img: img(0) },
-    { name: "Ekaa",                 neighbourhood: "Fort",       cuisine: "Contemporary Indian", venueType: "restaurant", approved: true,  img: img(1) },
-  ],
-  "late night": [
-    { name: "Trattoria",            neighbourhood: "Colaba",  cuisine: "Italian",     venueType: "restaurant", approved: true,  img: img(0) },
-    { name: "Bademiyaan",           neighbourhood: "Colaba",  cuisine: "Street Food", venueType: "restaurant", approved: true,  img: img(1) },
-    { name: "Good Flippin Burgers", neighbourhood: "Juhu",    cuisine: "Burgers",     venueType: "restaurant", approved: false, img: img(2) },
-    { name: "Miya Kebabs",          neighbourhood: "Bandra",  cuisine: "Street Food", venueType: "restaurant", approved: false, img: img(3) },
-    { name: "Sigdi",                neighbourhood: "Bandra",  cuisine: "Street Food", venueType: "restaurant", approved: false, img: img(0) },
-    { name: "14th Street Dessert",  neighbourhood: "Fort",    cuisine: "Desserts",    venueType: "dessert bar",approved: false, img: img(1) },
-    { name: "Tawaa Mystery",        neighbourhood: "Bandra",  cuisine: "Street Food", venueType: "restaurant", approved: false, img: img(2) },
-    { name: "Lord of the Drinks",   neighbourhood: "Multiple",cuisine: "Bar",         venueType: "bar",        approved: false, img: img(3) },
-    { name: "Woodside Inn",         neighbourhood: "Bandra",  cuisine: "Bar",         venueType: "bar",        approved: false, img: img(0) },
-    { name: "Hyde",                 neighbourhood: "South Bombay", cuisine: "Bar",    venueType: "bar",        approved: false, img: img(1) },
-  ],
-  "old bombay": [
-    { name: "Leopold",              neighbourhood: "Colaba",        cuisine: "All-day",     venueType: "restaurant", approved: false, img: img(0) },
-    { name: "Prithvi Cafe",         neighbourhood: "Juhu",          cuisine: "Café",        venueType: "café",       approved: true,  img: img(1) },
-    { name: "Khyber",               neighbourhood: "Fort",          cuisine: "North Indian",venueType: "restaurant", approved: true,  img: img(2) },
-    { name: "Gallops",              neighbourhood: "Fort",          cuisine: "North Indian",venueType: "restaurant", approved: false, img: img(3) },
-    { name: "Candies",              neighbourhood: "Bandra",        cuisine: "Café",        venueType: "café",       approved: false, img: img(0) },
-    { name: "Gaylord",              neighbourhood: "South Bombay",  cuisine: "Continental", venueType: "restaurant", approved: true,  img: img(1) },
-    { name: "Nandan Coffee",        neighbourhood: "Fort",          cuisine: "Café",        venueType: "café",       approved: false, img: img(2) },
-    { name: "Karachi Sweets",       neighbourhood: "Bandra",        cuisine: "Street Food", venueType: "restaurant", approved: false, img: img(3) },
-    { name: "Britannia & Co",       neighbourhood: "Ballard Estate",cuisine: "Parsi",       venueType: "restaurant", approved: true,  img: img(0) },
-    { name: "Trattoria",            neighbourhood: "Colaba",        cuisine: "Italian",     venueType: "restaurant", approved: true,  img: img(1) },
-  ],
-  "tasting menu": [
-    { name: "Masque",               neighbourhood: "Mahalaxmi",       cuisine: "Modern Indian",       venueType: "restaurant", approved: true,  img: img(0) },
-    { name: "Indian Accent",        neighbourhood: "Jio World Centre",cuisine: "Modern Indian",       venueType: "restaurant", approved: true,  img: img(1) },
-    { name: "Toa.66",               neighbourhood: "Churchgate",      cuisine: "Thai",                venueType: "restaurant", approved: true,  img: img(2) },
-    { name: "Avartana",             neighbourhood: "ITC",             cuisine: "Modern Indian",       venueType: "restaurant", approved: true,  img: img(3) },
-    { name: "Ekaa",                 neighbourhood: "Fort",            cuisine: "Contemporary Indian", venueType: "restaurant", approved: true,  img: img(0) },
-    { name: "Tresind",              neighbourhood: "BKC",             cuisine: "Progressive Indian",  venueType: "restaurant", approved: true,  img: img(1) },
-  ],
-  "worth the travel": [
-    { name: "Masque",               neighbourhood: "Mahalaxmi",       cuisine: "Modern Indian",       venueType: "restaurant", approved: true,  img: img(0) },
-    { name: "Ekaa",                 neighbourhood: "Fort",            cuisine: "Contemporary Indian", venueType: "restaurant", approved: true,  img: img(1) },
-    { name: "Nusara",               neighbourhood: "Lower Parel",     cuisine: "Thai",                venueType: "restaurant", approved: true,  img: img(2) },
-    { name: "Tresind",              neighbourhood: "BKC",             cuisine: "Progressive Indian",  venueType: "restaurant", approved: true,  img: img(3) },
-    { name: "Across",               neighbourhood: "Kala Ghoda",      cuisine: "Himalayan",           venueType: "restaurant", approved: true,  img: img(0) },
-    { name: "Burma Burma",          neighbourhood: "Fort",            cuisine: "Burmese",             venueType: "restaurant", approved: true,  img: img(1) },
-    { name: "Madeira & Mime",       neighbourhood: "Vikhroli",        cuisine: "European",            venueType: "restaurant", approved: true,  img: img(2) },
-    { name: "Indian Accent",        neighbourhood: "Jio World Centre",cuisine: "Modern Indian",       venueType: "restaurant", approved: true,  img: img(3) },
-  ],
+  "date night":      restaurants.filter(r => r.tags.includes("Date Night Done Right")).map(toResult),
+  "sunday brunch":   restaurants.filter(r => r.tags.includes("Sunday Morning")).map(toResult),
+  "late night":      restaurants.filter(r => r.tags.includes("After Midnight")).map(toResult),
+  "special occasion":restaurants.filter(r => r.tags.includes("Tasting Menu")).map(toResult),
+  "girls night out": restaurants.filter(r => r.tags.includes("Girls' Night Out")).map(toResult),
+  "old bombay":      restaurants.filter(r => r.tags.includes("Old Bombay")).map(toResult),
+  "tasting menu":    restaurants.filter(r => r.tags.includes("Tasting Menu")).map(toResult),
+  "worth the travel":restaurants.filter(r => r.tags.includes("Worth the Travel")).map(toResult),
+  "hidden gem":      restaurants.filter(r => r.tags.includes("Hidden Mumbai")).map(toResult),
+  "Bandra":          restaurants.filter(r => r.area.toLowerCase().includes("bandra") || r.area === "Pali Hill" || r.area === "Khar West").map(toResult),
+  "BKC":             restaurants.filter(r => r.area === "BKC").map(toResult),
+  "Colaba":          restaurants.filter(r => r.area === "Colaba").map(toResult),
+  "Fort":            restaurants.filter(r => r.area === "Fort" || r.area === "Kala Ghoda" || r.area === "Ballard Estate").map(toResult),
+  "Juhu":            restaurants.filter(r => r.area === "Juhu").map(toResult),
+  "Lower Parel":     restaurants.filter(r => r.area === "Lower Parel" || r.area === "Mahalaxmi").map(toResult),
+  "japanese":        restaurants.filter(r => r.cuisine.some(c => c.toLowerCase().includes("japanese"))).map(toResult),
+  "modern indian":   restaurants.filter(r => r.cuisine.some(c => c.toLowerCase().includes("modern indian") || c.toLowerCase().includes("contemporary indian"))).map(toResult),
+  "italian":         restaurants.filter(r => r.cuisine.some(c => c.toLowerCase().includes("italian"))).map(toResult),
+  "seafood":         restaurants.filter(r => r.cuisine.some(c => c.toLowerCase().includes("seafood") || c.toLowerCase().includes("coastal"))).map(toResult),
+  "mexican & spanish":restaurants.filter(r => r.cuisine.some(c => c.toLowerCase().includes("mexican"))).map(toResult),
 };
 
-const PLACEHOLDER: VenueResult[] = [
-  { name: "Venue One",   neighbourhood: "Bandra",  cuisine: "Contemporary", venueType: "restaurant", approved: true,  img: img(0) },
-  { name: "Venue Two",   neighbourhood: "Colaba",  cuisine: "Italian",      venueType: "restaurant", approved: false, img: img(1) },
-  { name: "Venue Three", neighbourhood: "Fort",    cuisine: "Seafood",      venueType: "restaurant", approved: true,  img: img(2) },
-  { name: "Venue Four",  neighbourhood: "BKC",     cuisine: "Japanese",     venueType: "restaurant", approved: false, img: img(3) },
-  { name: "Venue Five",  neighbourhood: "Juhu",    cuisine: "Mediterranean",venueType: "restaurant", approved: true,  img: img(0) },
-  { name: "Venue Six",   neighbourhood: "Worli",   cuisine: "Modern Indian",venueType: "restaurant", approved: true,  img: img(1) },
-];
+const PLACEHOLDER: VenueResult[] = restaurants.filter(r => r.pahalsPick).slice(0, 6).map(toResult);
 
 /* ── MICRO-COMPONENTS ────────────────────────────────────────── */
 function Av({ initials, size = 24 }: { initials: string; size?: number }) {
@@ -472,9 +396,14 @@ export default function BrowseTab() {
         }}>
           {results.map((v, i) => (
             <div key={i} className="hoverable" style={{ borderRadius: 4, overflow: "hidden" }}>
-              <div style={{ position: "relative", height: 180, background: v.img }}>
+              <div style={{ position: "relative", height: 180, background: "#E8E4DE", borderRadius: 4, overflow: "hidden" }}>
+                <img
+                  src={v.img}
+                  alt=""
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  onError={(e) => { e.currentTarget.style.display = "none"; }}
+                />
                 {v.approved && <Diamond />}
-                {/* Type badge */}
                 <div style={{
                   position: "absolute", bottom: 8, left: 8,
                   background: "#F5F3F0", border: "1px solid #E8E4DE",
