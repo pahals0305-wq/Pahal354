@@ -12,10 +12,15 @@
 
 body {
   font-family: var(--font-inter), "Inter", sans-serif;
-  background: #ffffff;
+  background: #f0ede8;
   color: #111009;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 20px;
 }
 
 /* Scrollbar hidden for all scroll rows */
